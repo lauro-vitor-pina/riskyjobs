@@ -1,17 +1,7 @@
 <?php
 
-function riskyjobs_repository_get_all(mysqli $dbc, string $search)
+function riskyjobs_repository_get_all(mysqli $dbc, string $search): array
 {
-    $where_list = array();
-
-    $search_words = explode(' ', $search);
-
-    foreach ($search_words as $word) {
-        array_push($where_list, "description LIKE '%$word%'");
-    }
-
-    $where_clausule = implode(' OR ', $where_list);
-
     $query = "SELECT
 	            `job_id`,
 	            `title`,
@@ -20,9 +10,7 @@ function riskyjobs_repository_get_all(mysqli $dbc, string $search)
                 `date_posted`
               FROM riskyjobs";
 
-    if (!empty($where_clausule)) {
-        $query .= " WHERE $where_clausule ";
-    }
+    $query = riskyjobs_repository_filter_get_all($query, $search);
 
     $query_result = mysqli_query($dbc, $query);
 
@@ -33,4 +21,35 @@ function riskyjobs_repository_get_all(mysqli $dbc, string $search)
     }
 
     return $result;
+}
+
+
+function riskyjobs_repository_filter_get_all(string $query, string $search): string
+{
+    $search_clean = str_replace(',', ' ', $search);
+
+    $search_words = explode(' ', $search_clean);
+
+    if (count($search_words) <= 0) {
+        return $query;
+    }
+
+    $where_list = array();
+
+    foreach ($search_words as $search_word_item) {
+
+        $word = trim($search_word_item);
+
+        if (!empty($word)) {
+            array_push($where_list, "description LIKE '%$word%'");
+        }
+    }
+
+    $where_clausule = implode(" OR ", $where_list);
+
+    if (empty($where_clausule)) {
+        return $query;
+    }
+
+    return $query . " WHERE $where_clausule ";
 }
