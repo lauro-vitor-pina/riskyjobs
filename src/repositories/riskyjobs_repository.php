@@ -1,6 +1,6 @@
 <?php
 
-function riskyjobs_repository_get_all(mysqli $dbc, string $search): array
+function riskyjobs_repository_get_all(mysqli $dbc, string $search, int $sort): array
 {
     $query = "SELECT
 	            `job_id`,
@@ -11,6 +11,8 @@ function riskyjobs_repository_get_all(mysqli $dbc, string $search): array
               FROM riskyjobs";
 
     $query = riskyjobs_repository_filter_get_all($query, $search);
+
+    $query = riskyjobs_repository_order_get_all($query, $sort);
 
     $query_result = mysqli_query($dbc, $query);
 
@@ -52,4 +54,35 @@ function riskyjobs_repository_filter_get_all(string $query, string $search): str
     }
 
     return $query . " WHERE $where_clausule ";
+}
+
+function riskyjobs_repository_order_get_all(string $query, int $sort): string
+{
+    $order_clausule = '';
+
+    switch ($sort) {
+        case ENUM_SORT_RISKYJOBS['title_asc']:
+            $order_clausule = 'ORDER BY title ASC';
+            break;
+        case ENUM_SORT_RISKYJOBS['title_desc']:
+            $order_clausule = 'ORDER BY title DESC';
+            break;
+        case ENUM_SORT_RISKYJOBS['state_asc']:
+            $order_clausule = 'ORDER BY state ASC';
+            break;
+        case ENUM_SORT_RISKYJOBS['state_desc']:
+            $order_clausule  = 'ORDER BY state DESC';
+            break;
+        case ENUM_SORT_RISKYJOBS['date_posted_asc']:
+            $order_clausule = 'ORDER BY date_posted ASC';
+            break;
+        case ENUM_SORT_RISKYJOBS['date_posted_desc']:
+            $order_clausule = 'ORDER BY date_posted  DESC';
+            break;
+        default:
+            $order_clausule = 'ORDER BY job_id ASC';
+            break;
+    }
+
+    return  $query . ' ' . $order_clausule;
 }
