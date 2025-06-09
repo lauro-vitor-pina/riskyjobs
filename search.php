@@ -3,32 +3,6 @@ require_once(__DIR__ . '/src/services/connection_database_service.php');
 require_once(__DIR__ . '/src/repositories/riskyjobs_repository.php');
 require_once(__DIR__ . '/src/enums/enum_sort_riskyjob.php');
 
-function generate_sort_links(string $search, int $sort): string
-{
-    $names_links = [
-        'Job Title' => $sort == ENUM_SORT_RISKYJOBS['title_asc'] ? ENUM_SORT_RISKYJOBS['title_desc'] :ENUM_SORT_RISKYJOBS['title_asc'],
-        'Description' => null,
-        'State' => $sort == ENUM_SORT_RISKYJOBS['state_asc'] ? ENUM_SORT_RISKYJOBS['state_desc'] : ENUM_SORT_RISKYJOBS['state_asc'],
-        'Date Posted' => $sort == ENUM_SORT_RISKYJOBS['date_posted_asc'] ? ENUM_SORT_RISKYJOBS['date_posted_desc'] : ENUM_SORT_RISKYJOBS['date_posted_asc'],
-    ];
-
-    $sort_links = '<tr class="heading">';
-
-    foreach ($names_links as $key => $value) {
-
-        $url = $_SERVER['PHP_SELF'];
-
-        if ($value != null)
-            $sort_links .=  "<td> <a href='$url?search=$search&sort=$value'>$key</a> </td>";
-        else
-            $sort_links .=  "<td> $key </td>";
-    }
-
-    $sort_links .= '</tr>';
-
-    return $sort_links;
-}
-
 
 $query_search = isset($_GET['search']) ? $_GET['search'] : '';
 $query_sort = isset($_GET['sort']) ? $_GET['sort'] : 0;
@@ -36,6 +10,13 @@ $query_sort = isset($_GET['sort']) ? $_GET['sort'] : 0;
 $dbc = connection_database_service_get_dbc();
 $result = riskyjobs_repository_get_all($dbc, $query_search, $query_sort);
 connection_database_service_close($dbc);
+
+$sort_config = [
+    'Job Title' => $query_sort == ENUM_SORT_RISKYJOBS['title_asc'] ? ENUM_SORT_RISKYJOBS['title_desc'] :ENUM_SORT_RISKYJOBS['title_asc'],
+    'Description' => null,
+    'State' => $query_sort == ENUM_SORT_RISKYJOBS['state_asc'] ? ENUM_SORT_RISKYJOBS['state_desc'] : ENUM_SORT_RISKYJOBS['state_asc'],
+    'Date Posted' => $query_sort == ENUM_SORT_RISKYJOBS['date_posted_asc'] ? ENUM_SORT_RISKYJOBS['date_posted_desc'] : ENUM_SORT_RISKYJOBS['date_posted_asc'],
+];
 
 ?>
 
@@ -57,7 +38,11 @@ connection_database_service_close($dbc);
 
         <?php
 
-        echo generate_sort_links($query_search, $query_sort);
+        echo  '<tr class="heading">';
+
+        echo generate_sort_links($sort_config, $query_search);
+
+        echo '</tr>';
 
         foreach ($result as $row) {
             echo '<tr class="results">';
@@ -74,3 +59,25 @@ connection_database_service_close($dbc);
 </body>
 
 </html>
+
+<?php 
+
+function generate_sort_links(array $sort_config, string $query_search): string
+{
+    $sort_links = '';
+
+    foreach ($sort_config as $key => $value) {
+
+        $url = $_SERVER['PHP_SELF'];
+
+        if ($value != null)
+            $sort_links .=  "<td> <a href='$url?search=$query_search&sort=$value'>$key</a> </td>";
+        else
+            $sort_links .=  "<td> $key </td>";
+    }
+
+    return $sort_links;
+}
+
+
+?>
