@@ -43,7 +43,7 @@ function riskyjobs_repository_get_all(mysqli $dbc, string $search, int $sort, in
     return $result;
 }
 
-function riskyjobs_repository_get_all_total(mysqli $dbc, string $search, int $sort): int
+function riskyjobs_repository_get_all_total(mysqli $dbc, string $search): int
 {
     $query_count = "SELECT COUNT(job_id) AS total FROM riskyjobs";
 
