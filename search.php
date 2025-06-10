@@ -2,23 +2,37 @@
 require_once(__DIR__ . '/src/services/connection_database_service.php');
 require_once(__DIR__ . '/src/repositories/riskyjobs_repository.php');
 require_once(__DIR__ . '/src/enums/enum_sort_riskyjob.php');
-
-
-$query_search = isset($_GET['search']) ? $_GET['search'] : '';
-$query_sort = isset($_GET['sort']) ? $_GET['sort'] : 0;
+require_once(__DIR__ . '/src/includes/generate_sort_links.php');
+require_once(__DIR__ . '/src/includes/generate_pagination_links.php');
 
 $dbc = connection_database_service_get_dbc();
-$result = riskyjobs_repository_get_all($dbc, $query_search, $query_sort);
-connection_database_service_close($dbc);
+
+$results_per_page = 5;
+$query_search = isset($_GET['search']) ? mysqli_real_escape_string($dbc, $_GET['search']) : '';
+$query_sort = isset($_GET['sort']) ? (int)mysqli_real_escape_string($dbc, $_GET['sort']) : 0;
+$query_page = isset($_GET['page']) ? (int)mysqli_real_escape_string($dbc, $_GET['page']) : 1;
 
 $sort_config = [
-    'Job Title' => $query_sort == ENUM_SORT_RISKYJOBS['title_asc'] ? ENUM_SORT_RISKYJOBS['title_desc'] :ENUM_SORT_RISKYJOBS['title_asc'],
+    'Job Title' => $query_sort == ENUM_SORT_RISKYJOBS['title_asc'] ? ENUM_SORT_RISKYJOBS['title_desc'] : ENUM_SORT_RISKYJOBS['title_asc'],
     'Description' => null,
     'State' => $query_sort == ENUM_SORT_RISKYJOBS['state_asc'] ? ENUM_SORT_RISKYJOBS['state_desc'] : ENUM_SORT_RISKYJOBS['state_asc'],
     'Date Posted' => $query_sort == ENUM_SORT_RISKYJOBS['date_posted_asc'] ? ENUM_SORT_RISKYJOBS['date_posted_desc'] : ENUM_SORT_RISKYJOBS['date_posted_asc'],
 ];
 
+
+$result = riskyjobs_repository_get_all($dbc, $query_search, $query_sort, $query_page, $results_per_page);
+
+$rows = $result['rows'];
+
+$num_pages = $result['num_pages'];
+
+$total  = $result['total'];
+
+connection_database_service_close($dbc);
+
 ?>
+
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -44,7 +58,7 @@ $sort_config = [
 
         echo '</tr>';
 
-        foreach ($result as $row) {
+        foreach ($rows as $row) {
             echo '<tr class="results">';
             echo '<td valign="top" width="20%">' . $row['title'] . '</td>';
             echo '<td valign="top" width="50%">' . substr($row['description'], 0, 100) . ' ...</td>';
@@ -56,28 +70,12 @@ $sort_config = [
         ?>
 
     </table>
+
+    <?php
+    if ($num_pages > 1) {
+        echo generate_pagination_links($query_page, $num_pages, $query_search, $query_sort);
+    }
+    ?>
 </body>
 
 </html>
-
-<?php 
-
-function generate_sort_links(array $sort_config, string $query_search): string
-{
-    $sort_links = '';
-
-    foreach ($sort_config as $key => $value) {
-
-        $url = $_SERVER['PHP_SELF'];
-
-        if ($value != null)
-            $sort_links .=  "<td> <a href='$url?search=$query_search&sort=$value'>$key</a> </td>";
-        else
-            $sort_links .=  "<td> $key </td>";
-    }
-
-    return $sort_links;
-}
-
-
-?>
