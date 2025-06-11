@@ -1,16 +1,16 @@
 <?php 
 
-function generate_pagination_links($current_page, $num_pages, $search, $sort)
+function generate_pagination_links($page_number, $num_pages, $search, $sort)
 {
     $url = $_SERVER['PHP_SELF'];
 
-    $next_page = $current_page + 1;
+    $next_page = $page_number + 1;
 
-    $previous_page = $current_page - 1;
+    $previous_page = $page_number - 1;
 
     $page_links = '';
 
-    if ($current_page <= 1) {
+    if ($page_number <= 1) {
         $page_links .= '<-';
     } else {  //se esta pagina não for a primeira, gera o link de página anterior (previous)
         $page_links .=  "<a href='$url?search=$search&sort=$sort&page=$previous_page'><-</a>";
@@ -23,7 +23,7 @@ function generate_pagination_links($current_page, $num_pages, $search, $sort)
         $page_links .=  "<a href='$url?search=$search&sort=$sort&page=$i'>$number_of_page</a>";
     }
 
-    if ($current_page >= $num_pages) {
+    if ($page_number >= $num_pages) {
         $page_links .= '->';
     } else {  //se esta pagina não for a última, gera o link de proxima pagina
         $page_links .=  "<a href='$url?search=$search&sort=$sort&page=$next_page'>-></a>";
