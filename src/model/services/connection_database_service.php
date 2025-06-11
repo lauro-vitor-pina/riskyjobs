@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/load_environmentvars_service.php');
+require_once(__DIR__ . '../../util/load_environmentvars_util.php');
 
 function connection_database_service_get_dbc() : mysqli
 {
