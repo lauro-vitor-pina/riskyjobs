@@ -4,7 +4,7 @@ require_once(__DIR__ . '../../controller/riskyjobs_controller.php');
 require_once(__DIR__ . '/includes/generate_sort_links.php');
 require_once(__DIR__ . '/includes/generate_pagination_links.php');
 
-$view_model_result = riskyjobs_controller_handler_search();
+$view_model = riskyjobs_controller_handler_search();
 
 ?>
 
@@ -25,14 +25,14 @@ $view_model_result = riskyjobs_controller_handler_search();
     <table border="0" cellpadding="2">
 
         <?php
-        if ($view_model_result['total'] >  0) {
+        if ($view_model->total > 0) {
             echo  '<tr class="heading">';
 
-            echo generate_sort_links($view_model_result['sort_config'], $view_model_result['search']);
+            echo generate_sort_links($view_model->get_sort_config(), $view_model->search);
 
             echo '</tr>';
 
-            foreach ($view_model_result['rows'] as $row) {
+            foreach ($view_model->rows as $row) {
                 echo '<tr class="results">';
                 echo '<td valign="top" width="20%">' . $row['title'] . '</td>';
                 echo '<td valign="top" width="50%">' . substr($row['description'], 0, 100) . ' ...</td>';
@@ -49,12 +49,12 @@ $view_model_result = riskyjobs_controller_handler_search();
     </table>
 
     <?php
-    if ($view_model_result['num_pages'] > 1) {
+    if ($view_model->num_pages > 1) {
         echo generate_pagination_links(
-            $view_model_result['page'],
-            $view_model_result['num_pages'],
-            $view_model_result['search'],
-            $view_model_result['sort']
+            $view_model->page_number,
+            $view_model->num_pages,
+            $view_model->search,
+            $view_model->sort
         );
     }
     ?>
