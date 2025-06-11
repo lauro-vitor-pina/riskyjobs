@@ -24,7 +24,7 @@ function riskyjobs_service_get_all(mysqli $dbc, string $search, int $sort, int $
 function riskyjobs_service_registration(mysqli $dbc, $fisrt_name, $last_name, $email, $phone, $desired_job, $resume): RegistrationViewModel
 {
     $view_model = new RegistrationViewModel();
-    
+
     $view_model->first_name = $fisrt_name;
     $view_model->last_name = $last_name;
     $view_model->email = $email;
@@ -44,8 +44,10 @@ function riskyjobs_service_registration(mysqli $dbc, $fisrt_name, $last_name, $e
         $view_model->email_error = 'You forgot to enter your email address.';
     }
 
-    if (empty($view_model->phone)) {
-        $view_model->phone_error = 'You forgot to enter your phone number.';
+    $regex_phone = '/^[2-9]\d{2}-\d{3}-\d{4}$/';
+    
+    if (!preg_match($regex_phone, $view_model->phone)) {
+        $view_model->phone_error = 'You your phone number is invalid, must be in XXX-XXX-XXXX format.';
     }
 
     if (empty($view_model->desired_job)) {
