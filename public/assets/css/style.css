@@ -10,6 +10,7 @@ tr.results {
 a {
   text-decoration: none;
   font-weight: bold;
+  cursor: pointer;
 }
 
 a:link {
@@ -31,4 +32,16 @@ a:active {
 .error {
   font-weight: bold;
   color: #FF0000;
+}
+
+.tb_job_information{
+  border-spacing: 0 12px;
+}
+
+.tr_job_information{
+  vertical-align: top;
+}
+
+.form-group{
+  margin-bottom: 15px;
 }

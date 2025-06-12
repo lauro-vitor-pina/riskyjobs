@@ -1,6 +1,5 @@
 <?php
 
-require_once(__DIR__ . '../../enums/enum_sort_riskyjob.php');
 
 function riskyjobs_repository_get_all(mysqli $dbc, string $search, int $sort, int $page, int $results_per_page)
 {
