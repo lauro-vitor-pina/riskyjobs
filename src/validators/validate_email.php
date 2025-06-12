@@ -1,7 +1,7 @@
 <?php
 
 
-function email_validator($email) //retorna true para um e-email é valido.
+function validate_email($email) //retorna true para um e-email é valido.
 {
     $regex = '/^[a-zA-Z09][a-zA-Z09\._\-&!?=#]*@/';
 

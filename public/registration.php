@@ -1,9 +1,8 @@
 <?php
 
-require_once(__DIR__ . '../../model/validators/email_validator.php');
-require_once(__DIR__ . '../../model/validators/phone_validator.php');
-require_once(__DIR__ . '../../model/services/connection_database_service.php');
-require_once(__DIR__ . '../../model/services/riskyjobs_service.php');
+require_once(__DIR__ . '../../src/validators/validate_email.php');
+require_once(__DIR__ . '../../src/validators/validate_phone.php');
+require_once(__DIR__ . '../../src/services/connection_database_service.php');
 
 $first_name = '';
 $last_name =  '';
@@ -42,12 +41,12 @@ if (isset($_POST['submit'])) {
         $last_name_error = 'You forgot to enter your last name.';
     }
 
-    if (!email_validator($email)) {
+    if (!validate_email($email)) {
         $output_form = true;
         $email_error = 'Your e-mail is invalid.';
     }
 
-    if (!phone_validator($phone)) {
+    if (!validate_phone($phone)) {
         $output_form = true;
         $phone_error =  'Your phone number is invalid, must be in XXX-XXX-XXXX format.';
     }
@@ -65,8 +64,7 @@ if (isset($_POST['submit'])) {
     if (!$output_form) {
 
         $new_phone = preg_replace('/[\(\)\-\s]/', '', $phone);
-
-        riskyjobs_service_registration($dbc, $first_name, $last_name, $email, $new_phone, $desired_job, $resume);
+        //insert a registration
     }
 
     connection_database_service_close($dbc);

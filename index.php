@@ -1,4 +1,4 @@
 <?php 
 
-header('Location: src/view/');
+header('Location: public/');
 exit;

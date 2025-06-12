@@ -10,7 +10,7 @@ $local_environments = [
 
 
 if (in_array($host, $local_environments)) {
-    require_once(__DIR__ . '../../../../environmentvars.local.php');
+    require_once(__DIR__ . '/environmentvars.local.php');
 } else {
-    require_once(__DIR__ . '../../../../environmentvars.prd.php');
+    require_once(__DIR__ . '/environmentvars.prd.php');
 }
