@@ -18,26 +18,3 @@ function riskyjobs_controller_handler_search(): SearchViewModel
 
     return $view_model;
 }
-
-function riskyjobs_controller_handler_registration(): RegistrationViewModel
-{
-
-    if (!isset($_POST['submit'])) {
-        return new RegistrationViewModel();
-    }
-
-    $dbc = connection_database_service_get_dbc();
-
-    $first_name = mysqli_escape_string($dbc, trim($_POST['first_name']));
-    $last_name = mysqli_escape_string($dbc, trim($_POST['last_name']));
-    $email = mysqli_escape_string($dbc, trim($_POST['email']));
-    $phone = mysqli_escape_string($dbc, trim($_POST['phone']));
-    $desired_job = mysqli_escape_string($dbc, trim($_POST['desired_job']));
-    $resume = mysqli_escape_string($dbc, trim($_POST['resume']));
-
-    $view_model = riskyjobs_service_registration($dbc, $first_name, $last_name, $email, $phone, $desired_job, $resume);
-
-    connection_database_service_close($dbc);
-
-    return $view_model;
-}

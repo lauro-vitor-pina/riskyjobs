@@ -21,54 +21,6 @@ function riskyjobs_service_get_all(mysqli $dbc, string $search, int $sort, int $
     return $view_model;
 }
 
-function riskyjobs_service_registration(mysqli $dbc, $fisrt_name, $last_name, $email, $phone, $desired_job, $resume): RegistrationViewModel
-{
-    $view_model = new RegistrationViewModel();
-
-    $view_model->first_name = $fisrt_name;
-    $view_model->last_name = $last_name;
-    $view_model->email = $email;
-    $view_model->phone = $phone;
-    $view_model->desired_job = $desired_job;
-    $view_model->resume = $resume;
-
-    if (empty($view_model->first_name)) {
-        $view_model->first_name_error = 'You forgot to enter your first name.';
-    }
-
-    if (empty($view_model->last_name)) {
-        $view_model->last_name_error = 'You forgot to enter your last name.';
-    }
-
-    if (empty($view_model->email)) {
-        $view_model->email_error = 'You forgot to enter your email address.';
-    }
-
-    $regex_phone = '/^[2-9]\d{2}-\d{3}-\d{4}$/';
-    
-    if (!preg_match($regex_phone, $view_model->phone)) {
-        $view_model->phone_error = 'You your phone number is invalid, must be in XXX-XXX-XXXX format.';
-    }
-
-    if (empty($view_model->desired_job)) {
-        $view_model->desired_job_error = 'You forgot to enter your desired job.';
-    }
-
-    if (empty($view_model->resume)) {
-        $view_model->resume_error = 'You forgot to enter your resume.';
-    }
-
-    $view_model->has_error =
-        !empty($view_model->first_name_error) ||
-        !empty($view_model->last_name_error) ||
-        !empty($view_model->email_error) ||
-        !empty($view_model->phone_error) ||
-        !empty($view_model->desired_job_error) ||
-        !empty($view_model->resume_error);
-
-    $view_model->output_form = $view_model->has_error;
-
-    //se não tiver error inserir os dados 
-
-    return $view_model;
+function riskyjobs_service_registration($dbc, $first_name, $last_name, $email, $phone, $desired_job,  $resume) {
+    echo 'process registration <br>';
 }

@@ -1,7 +1,77 @@
 <?php
-require_once(__DIR__ . '../../controller/riskyjobs_controller.php');
+require_once(__DIR__ . '../../model/services/riskyjobs_service.php');
+require_once(__DIR__ . '../../model/services/connection_database_service.php');
 
-$view_model =  riskyjobs_controller_handler_registration();
+$first_name = '';
+$last_name =  '';
+$email = '';
+$phone = '';
+$desired_job = '';
+$resume =  '';
+
+$first_name_error = '';
+$last_name_error = '';
+$email_error = '';
+$desired_job_error = '';
+$phone_error = '';
+$resume_error = '';
+
+if (isset($_POST['submit'])) {
+
+    $dbc = connection_database_service_get_dbc();
+
+    $first_name = mysqli_escape_string($dbc, trim($_POST['first_name']));
+    $last_name = mysqli_escape_string($dbc, trim($_POST['last_name']));
+    $email = mysqli_escape_string($dbc, trim($_POST['email']));
+    $phone = mysqli_escape_string($dbc, trim($_POST['phone']));
+    $desired_job = mysqli_escape_string($dbc, trim($_POST['desired_job']));
+    $resume = mysqli_escape_string($dbc, trim($_POST['resume']));
+    $output_form = false;
+
+    //form validation
+    if (empty($first_name)) {
+        $output_form = true;
+        $first_name_error = 'You forgot to enter your first name.';
+    }
+
+    if (empty($last_name)) {
+        $output_form = true;
+        $last_name_error = 'You forgot to enter your last name.';
+    }
+
+    if (empty($email)) {
+        $output_form = true;
+        $email_error = 'You forgot to enter your email address.';
+    }
+
+    if (!preg_match('/^\(?[2-9]\d{2}\)?-\d{3}-\d{4}$/', $phone)) {
+        $output_form = true;
+        $phone_error =  'You your phone number is invalid, must be in XXX-XXX-XXXX format.';
+    }
+
+    if (empty($desired_job)) {
+        $output_form = true;
+        $desired_job_error = 'You forgot to enter your desired job.';
+    }
+
+    if (empty($resume)) {
+        $output_form = true;
+        $resume_error = 'You forgot to enter your resume.';
+    }
+
+    if (!$output_form) {
+
+        $new_phone = preg_replace('/[\(\)\-\s]/', '', $phone);
+
+        riskyjobs_service_registration($dbc, $first_name, $last_name, $email, $new_phone, $desired_job, $resume);
+    }
+
+    connection_database_service_close($dbc);
+} else {
+    $output_form = true;
+}
+
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -17,7 +87,8 @@ $view_model =  riskyjobs_controller_handler_registration();
     <img src="assets/images/riskyjobs_title.gif" alt="Risky Jobs" />
     <img src="assets/images/riskyjobs_fireman.jpg" alt="Risky Jobs" style="float:right" />
     <h3>Risky Jobs - Registration</h3>
-    <?php if ($view_model->output_form) { ?>
+
+    <?php if ($output_form) { ?>
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
             <p>Register with Risky Jobs, and post your resume.</p>
             <table>
@@ -26,8 +97,8 @@ $view_model =  riskyjobs_controller_handler_registration();
                         <label for="first_name"> First Name:</label>
                     </td>
                     <td>
-                        <input type="text" name="first_name" id="first_name" value="<?php echo $view_model->first_name; ?>">
-                        <span class='error'> <?php echo $view_model->first_name_error; ?></span>
+                        <input type="text" name="first_name" id="first_name" value="<?php echo $first_name; ?>">
+                        <span class='error'> <?php echo $first_name_error; ?></span>
                     </td>
                 </tr>
                 <tr>
@@ -35,9 +106,9 @@ $view_model =  riskyjobs_controller_handler_registration();
                         <label for="last_name">Last Name:</label>
                     </td>
                     <td>
-                        <input type="text" name="last_name" id="last_name" value="<?php echo $view_model->last_name; ?>">
+                        <input type="text" name="last_name" id="last_name" value="<?php echo $last_name; ?>">
                         <span class="error">
-                            <?php echo $view_model->last_name_error; ?>
+                            <?php echo $last_name_error; ?>
                         </span>
                     </td>
                 </tr>
@@ -46,9 +117,9 @@ $view_model =  riskyjobs_controller_handler_registration();
                         <label for="email">Email:</label>
                     </td>
                     <td>
-                        <input type="text" name="email" value="<?php echo $view_model->email; ?>">
+                        <input type="text" name="email" value="<?php echo $email; ?>">
                         <span class="error">
-                            <?php echo $view_model->email_error; ?>
+                            <?php echo $email_error; ?>
                         </span>
                     </td>
                 </tr>
@@ -57,9 +128,9 @@ $view_model =  riskyjobs_controller_handler_registration();
                         <label for="phone"> Phone: </label>
                     </td>
                     <td>
-                        <input type="text" name="phone" id="phone" value="<?php echo $view_model->phone; ?>">
+                        <input type="text" name="phone" id="phone" value="<?php echo $phone; ?>">
                         <span class="error">
-                            <?php echo $view_model->phone_error; ?>
+                            <?php echo $phone_error; ?>
                         </span>
                     </td>
                 </tr>
@@ -68,25 +139,25 @@ $view_model =  riskyjobs_controller_handler_registration();
                         <label for="desired_job">Desired Job:</label>
                     </td>
                     <td>
-                        <input type="text" name="desired_job" id="desired_job" value="<?php echo $view_model->desired_job; ?>">
+                        <input type="text" name="desired_job" id="desired_job" value="<?php echo $desired_job; ?>">
                         <span class="error">
-                            <?php echo $view_model->desired_job_error; ?>
+                            <?php echo $desired_job_error; ?>
                         </span>
                     </td>
                 </tr>
             </table>
             <p>
                 <label for="resume">Paste your resume here:</label> <br />
-                <textarea name="resume" id="resume" rows="4" cols="40"><?php echo $view_model->resume; ?></textarea>
+                <textarea name="resume" id="resume" rows="4" cols="40"><?php echo $resume; ?></textarea>
                 <br>
                 <span class="error">
-                    <?php echo $view_model->resume_error; ?>
+                    <?php echo $resume_error; ?>
                 </span>
             </p>
             <input type="submit" name="submit" value="Submit" />
         </form>
     <?php  } else {
-        echo '<p>' . $view_model->first_name . ' ' . $view_model->last_name . ', thanks for registering with Risky Jobs!</p>';
+        echo '<p>' . $first_name . ' ' . $last_name . ', thanks for registering with Risky Jobs!</p>';
     } ?>
 </body>
 
