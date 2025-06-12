@@ -1,6 +1,9 @@
 <?php
-require_once(__DIR__ . '../../model/services/riskyjobs_service.php');
+
+require_once(__DIR__ . '../../model/validators/email_validator.php');
+require_once(__DIR__ . '../../model/validators/phone_validator.php');
 require_once(__DIR__ . '../../model/services/connection_database_service.php');
+require_once(__DIR__ . '../../model/services/riskyjobs_service.php');
 
 $first_name = '';
 $last_name =  '';
@@ -39,14 +42,14 @@ if (isset($_POST['submit'])) {
         $last_name_error = 'You forgot to enter your last name.';
     }
 
-    if (empty($email)) {
+    if (!email_validator($email)) {
         $output_form = true;
-        $email_error = 'You forgot to enter your email address.';
+        $email_error = 'Your e-mail is invalid.';
     }
 
-    if (!preg_match('/^\(?[2-9]\d{2}\)?-\d{3}-\d{4}$/', $phone)) {
+    if (!phone_validator($phone)) {
         $output_form = true;
-        $phone_error =  'You your phone number is invalid, must be in XXX-XXX-XXXX format.';
+        $phone_error =  'Your phone number is invalid, must be in XXX-XXX-XXXX format.';
     }
 
     if (empty($desired_job)) {
