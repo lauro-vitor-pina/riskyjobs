@@ -158,11 +158,7 @@ if ($job == null) {
     <?php
     if ($has_error) {
         echo '<p class="error">' . $message_result . '</p>';
-    } else {
-        echo '<p>' . $message_result . '</p>';
-        echo '<p> <a href="index.html">Back to Search Jobs Here</a> </p>';
     }
-
     ?>
 
     <?php if ($output_form) { ?>
@@ -205,7 +201,10 @@ if ($job == null) {
 
             <input type="submit" name="submit" value="Submit" />
         </form>
-    <?php  }  ?>
+    <?php  } else {
+        echo '<p>' . $message_result . '</p>';
+        echo '<p> <a href="index.html">Back to Search Jobs Here</a> </p>';
+    }  ?>
 </body>
 
 </html>
